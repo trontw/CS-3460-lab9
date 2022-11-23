@@ -6,7 +6,7 @@ public class Jugs {
 	
 	private static int N;
 	private static boolean [][] visited;
-    private static boolean [][] pred;
+    private static int [] pred;
     private static int [][] sum;
    
 	private static int start;
@@ -16,6 +16,7 @@ public class Jugs {
 	//private static int [] pred;
 	private static int [] state;
 	private static int [] newstate;
+	
 
 	private static int [] jug1;
 	private static int [] jug2;
@@ -97,7 +98,8 @@ public class Jugs {
 			//if (!visited[newstate[start2][c]] && isValid(newstate[start2][c])) {
 			if (!visited[newstate[0]][state[0]]) {
 				ret = ret | dfs(a, b, bMax);
-			   	pred[newstate[0]][state[0]] = true;
+			   	pred[newstate[0]] = newstate[0];
+				pred[newstate[1]] = state[0];
 			}
 		}
 		//Next, we check if we can pour from jug1 into jug2
@@ -107,7 +109,8 @@ public class Jugs {
 			newstate = state;
 			if (!visited[newstate[0]][newstate[1]]) {
 				ret = ret | dfs(a, b, bMax);
-				pred[newstate[0]][newstate[1]] = true;
+				pred[newstate[0]] = newstate[0];
+				pred[newstate[1]] = newstate[1];
 			}
 		}
 		System.out.println("After pourJug, stateA is "+state[0]+" and stateB is "+state[1]);
@@ -121,7 +124,8 @@ public class Jugs {
 			System.out.println("YO, stateB2 after emptying jug2 is "+state[1]);
 			if (!visited[state[0]][newstate[1]]) {
 				ret = ret | dfs(a, b, bMax);
-				pred[state[0]][newstate[1]] = true;
+				pred[newstate[0]] = state[0];
+				pred[newstate[1]] = newstate[1];
 		}
 	}
 		//int newstate = moveMe(state, me);
@@ -133,18 +137,20 @@ public class Jugs {
 	}
 
 	/** Print the path from the start to state recursively -- first print the path from start to pred[state], and then print the current state. */
-	private static void print(int state) {
-		if (state == -1) return;
+	private static void print(int goal) {
+		if (goal == -1) return;
 
-		//print(pred[(int) state]);
-
-		String left = "";
-		String right = "";
-		String helper = "CGWM";
-
-		System.out.println(left + " | " + right);
+		print(pred[goal]);
+	
+		String fill = "Fill Jug 1";
+		String pour = "Pour Jug 1 -> Jug 2";
+		String empty = "Empty Jug 2";
+		//String helper = "CGWM";
+		System.out.println(fill + "[a = "+pred[newstate[0]]+", b = "+pred[newstate[1]]+"]");
+		//System.out.println(left + " | " + right);
 	}
-    static void printSumTable(int[][] sum2, int a){
+
+	static void printSumTable(int[][] sum2, int a){
         for (int i = 0; i < a; ++i){
             for (int j = 0; j < a; ++j){
                 System.out.print(" " + sum2[i][j]+" ");    
@@ -178,8 +184,11 @@ public class Jugs {
         sum = new int[N][N];
 		//int[][] grid = new int[8][8]; 
 		visited = new boolean[a1 + 1][b1 + 1];
-        pred = new boolean[a1 + 1][b1 + 1];
-		pred[0][0] = false;
+        pred = new int[N];
+		for (int i = 0; i < N; i++) {
+			pred[i] = -1;
+		}
+	
 		state = new int[N];
 		newstate = new int[N];
 		visited[0][0] = true;
@@ -189,7 +198,7 @@ public class Jugs {
 		start = 0;
 		int bMax = b;
 		if (dfs(a,  b, bMax)) {
-			System.out.println("Yay!");
+			System.out.println("Yay! Found a solution.");
 			print(goal);
 		}
         //for (int i = 0; i < a; i++) {
