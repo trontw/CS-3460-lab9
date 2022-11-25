@@ -6,24 +6,18 @@ public class Jugs {
 	
 	private static int N;
 	private static boolean [][] visited;
-    private static int [] pred;
+    private static int[][] pred;
+	private static String[][] predString;
+
     private static int [][] sum;
    
 	private static int start;
 	private static int goal;
 	private static int a;
 	private static int b;
-	//private static int [] pred;
+
 	private static int [] state;
 	private static int [] newstate;
-	
-
-	private static int [] jug1;
-	private static int [] jug2;
-	static int [] stateA;
-	static int [] stateB;
-	static int stateA2;
-	static int stateB2;
 
     /** Return the bit of item i. A 0 indicates this item is on the left side of the river, and 1 indicates that this item is on the right side of the river. */
 	private static int goal(int c) {
@@ -37,10 +31,10 @@ public class Jugs {
 		state[0] = a;
 		return state;
 	}
-    /* Return the state after pouring from Jug 1 into Jug 2 */
+    /* Return the state after pouring from Jug1 into Jug2 */
     private static  int[] pourJug(int jug1, int jug2, int bMax) {
 		int prejug2 = jug2;
-		//If jug2 is already full, then we chouldn't be here.
+		//If jug2 is already full, then we shouldn't be here.
 		//Next, since jug2 is not full, pour jug1 into jug2
 		jug2 += jug1;
 		//First, check if adding overflows jug2 and update jug2
@@ -80,53 +74,57 @@ public class Jugs {
 		//System.out.println("b = "+b);
 		if (a < 0 && b < 0 || a >= N && b >= N) return false;
 		System.out.println("Made it past a, b checks.");
-		System.out.println("stateA2 = "+state[0]);
-		System.out.println("stateB2 = "+state[1]);
+		System.out.println("Jug1 = "+state[0]);
+		System.out.println("Jug2 = "+state[1]);
 		System.out.println("goal is = "+goal);
 		//if (sum[state[0]][state[1]]== goal) return true;
 		if (state[0] + state[1] == goal) return true;
-		System.out.println("Made it past stateA2 and B2 checks.");
+		System.out.println("Made it past Jug1 and Jug2 checks.");
         // Mark this state as being visited.
 		visited[state[0]][state[1]] = true;
-		//System.out.println("visited[[jug1][jug2]] "+visited[state[0]][state[1]]);
+		//returns 'true', which means must convert boolean to int for pred table
+		System.out.println("visited[[jug1][jug2]] is "+visited[state[0]][state[1]]);
 		boolean ret = false;
 		//First, we must fill jug1 to start
 		if (state[0] == 0) {
 			state = fillJug1(state[0], a);
-			System.out.println("Fill Jug is "+state[0]);
+			System.out.println("Fill Jug1 is "+state[0]);
 			newstate = state;
 			//if (!visited[newstate[start2][c]] && isValid(newstate[start2][c])) {
 			if (!visited[newstate[0]][state[0]]) {
 				ret = ret | dfs(a, b, bMax);
-			   	pred[newstate[0]] = newstate[0];
-				pred[newstate[1]] = state[0];
+			   	pred[newstate[0]][state[0]] = 1;
+				predString[newstate[0]][state[0]] = "Fill Jug 1 ";
 			}
 		}
 		//Next, we check if we can pour from jug1 into jug2
 		//First, make sure jug2 is not full
 		if (state[1] < bMax) {
 			state = pourJug(state[0], state[1], bMax);
+			//pourJug returns updated state of both Jug1 and Jug2
 			newstate = state;
 			if (!visited[newstate[0]][newstate[1]]) {
 				ret = ret | dfs(a, b, bMax);
-				pred[newstate[0]] = newstate[0];
-				pred[newstate[1]] = newstate[1];
+				pred[newstate[0]][newstate[1]] = 1;
+				predString[newstate[0]][newstate[1]] = "Pour Jug 1 -> Jug 2 ";
 			}
 		}
-		System.out.println("After pourJug, stateA is "+state[0]+" and stateB is "+state[1]);
+		System.out.println("After pourJug, Jug1 is "+state[0]+" and Jug2 is "+state[1]);
 		// Next, check if we need to empty jug2 
 		//This would only be if jug1 is not zero and jug2 is full)
-		System.out.println("HEY, what is stateB2 right now? = "+state[1]);
+		System.out.println("HEY, what is Jug2 right now? = "+state[1]);
 		if (state[1] == bMax && state[0] > 0) {
-			System.out.println("*** Getting ready to empty jug2. ***");
+			System.out.println("*** Getting ready to empty Jug2. ***");
 			state = emptyJug2(state[1], b);
 			newstate = state;
-			System.out.println("YO, stateB2 after emptying jug2 is "+state[1]);
+			System.out.println("YO, Jug2 after emptying Jug2 is "+state[1]);
 			if (!visited[state[0]][newstate[1]]) {
 				ret = ret | dfs(a, b, bMax);
-				pred[newstate[0]] = state[0];
-				pred[newstate[1]] = newstate[1];
+				pred[state[0]][newstate[1]] = 1;
+				predString[state[0]][newstate[1]] = "Empty Jug 2 ";
 		}
+		System.out.println("pred Loop table: ");
+		printPredTable(pred, a, b);
 	}
 		//int newstate = moveMe(state, me);
 		//if (!visited[newstate] && isValid(newstate)) {
@@ -136,37 +134,45 @@ public class Jugs {
 		return ret;
 	}
 
-	/** Print the path from the start to state recursively -- first print the path from start to pred[state], and then print the current state. */
-	private static void print(int goal) {
-		if (goal == -1) return;
+	/** Print the path from the start to state recursively 
+	 * -- first print the path from start to pred[state], 
+	 * and then print the current state. 
+	 * @param goal2*/
+	private static void print(int state) {
+		if (state == -1) return;
 
-		print(pred[goal]);
-	
+		print(pred[state][state]);
+		int jug1 = newstate[0];
+		int jug2 = newstate[1];
 		String fill = "Fill Jug 1";
 		String pour = "Pour Jug 1 -> Jug 2";
 		String empty = "Empty Jug 2";
-		//String helper = "CGWM";
-		System.out.println(fill + "[a = "+pred[newstate[0]]+", b = "+pred[newstate[1]]+"]");
-		//System.out.println(left + " | " + right);
+		
+		if (pred[jug1][jug2] == 1) {
+			System.out.println(predString[jug1][jug2] + " [a = "+jug1+", b = "+jug2+"]");
+		}
 	}
 
 	static void printSumTable(int[][] sum2, int a){
         for (int i = 0; i < a; ++i){
             for (int j = 0; j < a; ++j){
-                System.out.print(" " + sum2[i][j]+" ");    
-            }
-            System.out.println();
-        }
+                System.out.print(" " + sum2[i][j]+" ");}
+            System.out.println();}
         System.out.println("----------------");
     }
    
-    static void printStateTable(int[][] grid){
-        for (int i = 0; i < grid.length; ++i){
-            for (int j = 0; j < 2; ++j){
-                System.out.print(" " + grid[i][j]+" ");    
-            }
-            System.out.println();
-        }
+    static void printVisitedTable(boolean[][] visited2, int a, int b){
+        for (int i = 0; i < a; ++i){
+            for (int j = 0; j < b; ++j){
+                System.out.print(" " + visited2[i][j]+" ");}
+            System.out.println();}
+        System.out.println("----------------");
+    }
+	static void printPredTable(int[][] pred, int a, int b){
+        for (int i = 0; i < a + 1; ++i){
+            for (int j = 0; j < b + 1; ++j){
+                System.out.print(" " + pred[i][j]+" "); }
+            System.out.println();}
         System.out.println("----------------");
     }
 	public static void main(String [] args) {
@@ -180,38 +186,41 @@ public class Jugs {
         int b1 = kb.nextInt();
         System.out.println("Enter C: ");
         int c1 = kb.nextInt();
- 
+		
+		predString = new String[N][N];
         sum = new int[N][N];
-		//int[][] grid = new int[8][8]; 
-		visited = new boolean[a1 + 1][b1 + 1];
-        pred = new int[N];
-		for (int i = 0; i < N; i++) {
-			pred[i] = -1;
+		//visited = new boolean[a1 + 1][b1 + 1];
+        visited = new boolean[N][N];
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				visited[i][j] = false;
+			}
 		}
-	
+		pred = new int[N][N];
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				pred[i][j] = -1;
+			}
+		}
 		state = new int[N];
 		newstate = new int[N];
-		visited[0][0] = true;
+		//visited[0][0] = true;
 		goal = c1;
 		a = a1;
 		b = b1;
 		start = 0;
 		int bMax = b;
+		System.out.println("visited INIT table: ");
+		printVisitedTable(visited, a, b);
+
 		if (dfs(a,  b, bMax)) {
 			System.out.println("Yay! Found a solution.");
 			print(goal);
-		}
-        //for (int i = 0; i < a; i++) {
-        //    for (int j = 0; j < b; j++) {
-		//	    sum[i][j] = i + j;
-        //    }
-		//}
-        //System.out.println("Sum table: ");
-        //if (a > b)
-        //    printSumTable(sum, a);
-        //else 
-        //    printSumTable(sum, b);
-        /*System.out.println("State table: ");
-            printStateTable(grid);*/
+		} else
+			System.out.println("Impossible!");
+		System.out.println("visited POST table: ");
+		printVisitedTable(visited, a, b);
+		System.out.println("pred POST table: ");
+		printPredTable(pred, a, b);
 	}
 }
