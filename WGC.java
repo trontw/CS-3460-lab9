@@ -4,7 +4,7 @@ public class WGC {
 	private static boolean [] visited;
 	private static int start;
 	private static int goal;
-	private static int [] pred;
+	//private static int [] pred;
 
 	/** Return the bit of item i. A 0 indicates this item is on the left side of the river, and 1 indicates that this item is on the right side of the river. */
 	private static int bit(int state, int i) {
@@ -71,11 +71,11 @@ public class WGC {
 		if (state == -1) return;
 
 		print(pred[state]);
-
+		System.out.println("STATE ---------> inside recursive print = "+state);
 		String left = "";
 		String right = "";
 		String helper = "CGWM";
-
+		//System.out.println("PRINT ---------> inside recursive print.");
 		for (int i = 0; i < 4; i++) {
 			int c = bit(state, i);
 			if (c == 0) {
