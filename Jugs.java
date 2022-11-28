@@ -10,7 +10,7 @@ public class Jugs {
 	private static int[][] PredA;
 	private static int[][] PredB;
 	private static String[][] predString;
-
+	private static int [] state;
     private static int [][] sum;
    
 	private static int goal;
@@ -73,69 +73,69 @@ public class Jugs {
 		System.out.println("Made it inside dfs.");
 		//System.out.println("a = "+a);
 		//System.out.println("b = "+b);
-		int [] state = new int[N];
-		int[][][] pred = new int[N][N][2];
-		pred[c][d][0] = a;
-		pred[c][d][1] = b;
+		//int [] state = new int[N];
+		//int[][][] pred = new int[N][N][2];
+		//pred[c][d][0] = a;
+		//pred[c][d][1] = b;
 		if ((a < 0 || b < 0) || (a >= N || b >= N)) return false;
 		//if (sum[state[0]][state[1]]== goal) return true;
 		if (a + b == goal) return true;
 		
 		boolean ret = false;
 
-		System.out.println("Jug1 = "+pred[c][d][0]);
-		System.out.println("Jug2 = "+pred[c][d][1]);
+		System.out.println("Jug1 = "+state[0]);
+		System.out.println("Jug2 = "+state[1]);
 		System.out.println("Made it past Jug1 and Jug2 checks.");
         // Mark this state as being visited, initially (0,0).
 		
 		//returns 'true', which means must convert boolean to int for pred table
-		System.out.println("visited[[jug1][jug2]] is "+visited[pred[c][d][0]][pred[c][d][1]]);
+		System.out.println("visited[[jug1][jug2]] is "+visited[state[0]][state[1]]);
 		System.out.println("-----------------------------");
 		
 		//First, we must fill jug1 to start
-		if (pred[c][d][0] == 0) {
+		if (state[0] == 0) {
 			state = fillJug1(b);
-			pred[c][d][0] = state[0];
-			System.out.println("Fill Jug1 is "+pred[c][d][0]);
-			if (!visited[pred[c][d][0]][pred[c][d][1]]) {
-				visited[pred[c][d][0]][pred[c][d][1]] = true;
-				predString[pred[c][d][0]][pred[c][d][1]] = "Fill Jug 1 ";
-				PredA[pred[c][d][0]][pred[c][d][1]] = pred[c][d][0];
-				PredB[pred[c][d][0]][pred[c][d][1]] = pred[c][d][1];
-				ret = ret | dfs(pred[c][d][0], pred[c][d][1], bMax);
+			//pred[c][d][0] = state[0];
+			System.out.println("Fill Jug1 is "+state[0]);
+			if (!visited[state[0]][state[1]]) {
+				visited[state[0]][state[1]] = true;
+				predString[state[0]][state[1]] = "Fill Jug 1 ";
+				PredA[state[0]][state[1]] = state[0];
+				PredB[state[0]][state[1]] = state[1];
+				ret = ret | dfs(state[0], state[1], bMax);
 			}
 		}
 		//Next, we check if we can pour from jug1 into jug2
 		//First, make sure jug2 is not full
-		if (pred[c][d][1] < bMax) {
-			state = pourJug(pred[c][d][0], pred[c][d][1], bMax);
-			pred[c][d][0] = state[0];
-			pred[c][d][1] = state[1];
+		if (state[1] < bMax) {
+			state = pourJug(state[0], state[1], bMax);
+			//pred[c][d][0] = state[0];
+			//pred[c][d][1] = state[1];
 			//pourJug returns updated state of both Jug1 and Jug2
-			if (!visited[pred[c][d][0]][pred[c][d][1]]) {
-				visited[pred[c][d][0]][pred[c][d][1]] = true;
-				predString[pred[c][d][0]][pred[c][d][1]] = "Pour Jug 1 -> Jug 2 ";
-				PredA[pred[c][d][0]][pred[c][d][1]] = pred[c][d][0];
-				PredB[pred[c][d][0]][pred[c][d][1]] = pred[c][d][1];
-				ret = ret | dfs(pred[c][d][0], pred[c][d][1], bMax);
+			if (!visited[state[0]][state[1]]) {
+				visited[state[0]][state[1]] = true;
+				predString[state[0]][state[1]] = "Pour Jug 1 -> Jug 2 ";
+				PredA[state[0]][state[1]] = state[0];
+				PredB[state[0]][state[1]] = state[1];
+				ret = ret | dfs(state[0], state[1], bMax);
 			}
 		}
-		System.out.println("After pourJug, Jug1 is "+pred[c][d][0]+" and Jug2 is "+pred[c][d][1]);
+		System.out.println("After pourJug, Jug1 is "+state[0]+" and Jug2 is "+state[1]);
 		// Next, check if we need to empty jug2 
 		//This would only be if jug1 is not zero and jug2 is full)
-		System.out.println("HEY, what is Jug2 right now? = "+pred[c][d][1]);
-		if (pred[c][d][1] == bMax && pred[c][d][0] > 0) {
+		System.out.println("HEY, what is Jug2 right now? = "+state[1]);
+		if (state[1] == bMax && state[0] > 0) {
 			System.out.println("*** Getting ready to empty Jug2. ***");
 			state = emptyJug2(a);
 			//pred[c][d][0] = state[0];
-			pred[c][d][1] = state[1];
-			System.out.println("YO, Jug2 after emptying Jug2 is "+pred[c][d][1]);
-			if (!visited[pred[c][d][0]][pred[c][d][1]]) {
-				visited[pred[c][d][0]][pred[c][d][1]] = true;
-				predString[pred[c][d][0]][pred[c][d][1]] = "Empty Jug 2 ";
-				PredA[pred[c][d][0]][pred[c][d][1]] = pred[c][d][0];
-				PredB[pred[c][d][0]][pred[c][d][1]] = pred[c][d][1];
-				ret = ret | dfs(pred[c][d][0],pred[c][d][1], bMax);
+			//pred[c][d][1] = state[1];
+			System.out.println("YO, Jug2 after emptying Jug2 is "+state[1]);
+			if (!visited[state[0]][state[1]]) {
+				visited[state[0]][state[1]] = true;
+				predString[state[0]][state[1]] = "Empty Jug 2 ";
+				PredA[state[0]][state[1]] = state[0];
+				PredB[state[0]][state[1]] = state[1];
+				ret = ret | dfs(state[0],state[1], bMax);
 			}
 		}
 		return ret;
@@ -148,10 +148,10 @@ public class Jugs {
 		System.out.println("Almost Done ---> inside recursive print.");
 		if (x == 0 && y == 0) return;
 		print(PredA[x][y], PredB[x][y]);
-		// int jug1 = PredA[x][y];	
-		// int jug2 = PredB[x][y];
-		jug1 = x;
-		jug2 = y;
+		 int jug1 = PredA[x][y];	
+		 int jug2 = PredB[x][y];
+		//jug1 = x;
+		//jug2 = y;
 		System.out.println("jug1 inside PRINT = "+jug1+" and jug2 = "+jug2);
 		System.out.println(predString[jug1][jug2] + " [a = "+jug1+", b = "+jug2+"]");
 	}
@@ -201,7 +201,7 @@ public class Jugs {
 		}
 		PredA = new int[a1 + 1][b1 + 1];
 		PredB = new int[a1 + 1][b1 + 1];
-		//state = new int[N];
+		state = new int[N];
 		
 		goal = c1;
 		a = a1;
