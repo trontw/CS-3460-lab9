@@ -37,8 +37,38 @@ public class Jugs {
 		//System.out.println("jug1 inside fillJug1 is "+jug1+" b inside fillJug1 is = "+b);
 		return new int[] {jug1, b};
 	}
+	/* Return the state after filling Jug 1 */
+	private static int[] fillJug2(int a) {
+		//System.out.println("jug2 inside fillJug1 is "+jug2+" a inside fillJug1 is = "+a);
+		return new int[] {a, jug2};
+	}
+	/* Return the state after pouring from Jug1 into Jug2 */
+    private static  int[] pourJugBtoA(int jug1, int jug2, int bMax) {
+		//int prejug2 = jug2;
+		int prejug1 = jug1;
+		c = jug1;
+		d = jug2;
+		//System.out.println("jug1 before pouring  is = "+jug1);
+		//System.out.println("jug2 before pouring  is = "+jug2);
+		//If jug1 is already full, then we shouldn't be here.
+		//Next, since jug1 is not full, pour jug2 into jug1
+		//jug2 += jug1;
+		jug1 += jug2;
+		//First, check if adding overflows jug1 and update jug1
+		if (jug1 >= bMax) {
+			jug1 = bMax;
+		}
+		//Update jug2 if it poured into jug1
+		int diff = jug1 - prejug1;
+		jug1 = jug1 - diff;
+		c = jug1;
+		//System.out.println("jug1 after pouring  is = "+c);
+		d = jug2;
+		//System.out.println("jug2 after pouring  is = "+d);
+		return new int[] {c, d};
+    }
     /* Return the state after pouring from Jug1 into Jug2 */
-    private static  int[] pourJug(int jug1, int jug2, int bMax) {
+    private static  int[] pourJugAtoB(int jug1, int jug2, int bMax) {
 		int prejug2 = jug2;
 		c = jug1;
 		d = jug2;
@@ -61,16 +91,20 @@ public class Jugs {
 		//System.out.println("jug2 after pouring  is = "+d);
 		return new int[] {c, d};
     }
+	/* Return the state after emptying jug1 */
+	private static int[] emptyJug1(int b) {
+		//System.out.println("b inside emptyJug2 is = "+b);
+		return new int[] {0, b};
+	}
 	/* Return the state after emptying jug2 */
 	private static int[] emptyJug2(int a) {
 		//System.out.println("a inside emptyJug2 is = "+a);
 		return new int[] {a, 0};
 	}
+	
 
 	/* Do a depth first search from the current state. 
 	   If goal is reachable, return true, otherwise return false. 
-	   bool[][] table = new bool[n][m]
-	   table[a][b] = true if you visited it before
 	*/
 	private static boolean dfs (int a, int b, int bMax) {
 		//System.out.println("Made it inside dfs.");
@@ -81,75 +115,92 @@ public class Jugs {
 		//pred[c][d][0] = a;
 		//pred[c][d][1] = b;
 		if ((a < 0 || b < 0) || (a >= N || b >= N)) return false;
-		//if (sum[state[0]][state[1]]== goal) return true;
 		//visited[a][b] = true;
 		if (a + b == goal) {
 			goalA = a;
 			goalB = b;
 			return true;
 		}
-		
 		boolean ret = false;
-		// visit state (a, b)
-		// visited[a][b] = true;
-
 		//System.out.println("Jug1 = "+state[0]);
 		//System.out.println("Jug2 = "+state[1]);
 		//System.out.println("Made it past Jug1 and Jug2 checks.");
-        // Mark this state as being visited, initially (0,0).
-		
+        
 		//returns 'true', which means must convert boolean to int for pred table
 		//System.out.println("visited[[jug1][jug2]] is "+visited[state[0]][state[1]]);
 		//System.out.println("-----------------------------");
-		
+		//Next, we check if we can pour from jug1 into jug2
+		//First, make sure jug2 is not full
+		//if (state[1] < bMax) {
+		//if (state[0] + state[1] == goal) return true;
+		state = pourJugAtoB(state[0], state[1], bMax);
+		//pourJug returns updated state of both Jug1 and Jug2
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Pour Jug 1 -> Jug 2 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0], state[1], bMax);
+		}
 		//First, we must fill jug1 to start
-		if (state[0] == 0) {
-			state = fillJug1(b);
+		//if (state[0] == 0) {
+		state = fillJug1(b);
+		//pred[c][d][0] = state[0];
+		//System.out.println("Fill Jug1 is "+state[0]);
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Fill Jug 1 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0], state[1], bMax);
+		}
+		//}
+		state = fillJug2(a);
 			//pred[c][d][0] = state[0];
 			//System.out.println("Fill Jug1 is "+state[0]);
 			if (!visited[state[0]][state[1]]) {
 				visited[state[0]][state[1]] = true;
-				predString[state[0]][state[1]] = "Fill Jug 1 ";
+				predString[state[0]][state[1]] = "Fill Jug 2 ";
 				PredA[state[0]][state[1]] = a;
 				PredB[state[0]][state[1]] = b;
 				ret = ret | dfs(state[0], state[1], bMax);
 			}
+		state = pourJugBtoA(state[0], state[1], bMax);
+		//pourJug returns updated state of both Jug1 and Jug2
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Pour Jug 2 -> Jug 1 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0], state[1], bMax);
 		}
-		//Next, we check if we can pour from jug1 into jug2
-		//First, make sure jug2 is not full
-		if (state[1] < bMax) {
-			//if (state[0] + state[1] == goal) return true;
-			state = pourJug(state[0], state[1], bMax);
-			//pred[c][d][0] = state[0];
-			//pred[c][d][1] = state[1];
-			//pourJug returns updated state of both Jug1 and Jug2
-			if (!visited[state[0]][state[1]]) {
-				visited[state[0]][state[1]] = true;
-				predString[state[0]][state[1]] = "Pour Jug 1 -> Jug 2 ";
-				PredA[state[0]][state[1]] = a;
-				PredB[state[0]][state[1]] = b;
-				ret = ret | dfs(state[0], state[1], bMax);
-			}
+		//}
+		state = emptyJug1(b);
+		//System.out.println("YO, Jug1 after emptying Jug1 is "+state[1]);
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Empty Jug 1 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0],state[1], bMax);
 		}
 		//System.out.println("After pourJug, Jug1 is "+state[0]+" and Jug2 is "+state[1]);
 		// Next, check if we need to empty jug2 
 		//This would only be if jug1 is not zero and jug2 is full)
 		//System.out.println("HEY, what is Jug2 right now? = "+state[1]);
-		if (state[1] == bMax && state[0] > 0) {
-			//if (state[0] + state[1] == goal) return true;
-			//System.out.println("*** Getting ready to empty Jug2. ***");
-			state = emptyJug2(a);
-			//pred[c][d][0] = state[0];
-			//pred[c][d][1] = state[1];
-			//System.out.println("YO, Jug2 after emptying Jug2 is "+state[1]);
-			if (!visited[state[0]][state[1]]) {
-				visited[state[0]][state[1]] = true;
-				predString[state[0]][state[1]] = "Empty Jug 2 ";
-				PredA[state[0]][state[1]] = a;
-				PredB[state[0]][state[1]] = b;
-				ret = ret | dfs(state[0],state[1], bMax);
-			}
+		//if (state[1] == bMax && state[0] > 0) {
+		//if (state[0] + state[1] == goal) return true;
+		//System.out.println("*** Getting ready to empty Jug2. ***");
+		state = emptyJug2(a);
+		//System.out.println("YO, Jug2 after emptying Jug2 is "+state[1]);
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Empty Jug 2 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0],state[1], bMax);
 		}
+		//}
 		return ret;
 	}
 	/** Print the path from the start to state recursively 
@@ -162,9 +213,6 @@ public class Jugs {
 		if (x == 0 && y == 0) return;
 	
 		print(PredA[x][y], PredB[x][y]);
-		//print(x, y);
-		//  int jug1 = PredA[x][y];	
-		//  int jug2 = PredB[x][y];
 		jug1 = x;
 		jug2 = y;
 		System.out.println("jug1 inside PRINT = "+jug1+" and jug2 = "+jug2);
@@ -195,7 +243,7 @@ public class Jugs {
         System.out.println("----------------");
     }
 	public static void main(String [] args) {
-		N = 16;
+		N = 1000;
         Scanner kb = new Scanner(System.in);
         //For Jugs A and B, you are trying to fill enough to get C qty.
         //Using the rules of emptying/filling completely
@@ -225,8 +273,7 @@ public class Jugs {
 		jug1 = a;
 		jug2 = b;
 		int bMax = b;
-		//System.out.println("visited INIT table: ");
-		//printVisitedTable(visited, a, b);
+		// Mark this state as being visited, initially (0,0).
 		visited[0][0] = true;
 		if (dfs(0,  0, bMax)) {
 			System.out.println("Yay! Found a solution.");
