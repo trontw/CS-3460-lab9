@@ -14,11 +14,11 @@ public class Queue {
 	**/
 	public Queue() {
 		//numElements = 0;
-		//size = 1000;
+		size = 1000;
 		numElements = 0;
-		size = 10;
-		front =  - 1;
-		end =  - 1;
+		//size = 10;
+		front =  - 1;//changed from size -1 because it was too unpredictable
+		end =  - 1;//changed from size -1 because it was too unpredictable
 		queue = new QNode[size + 1];
 	}
 	
@@ -57,6 +57,7 @@ public class Queue {
 		if (numElements == 0) {
 			return null;
 		} else if (front == end) {
+			//Reset to base when removing last element.
 			Queue.front =  - 1;
 			Queue.end =  - 1;
 		} else {
@@ -64,16 +65,12 @@ public class Queue {
 		}
 		System.out.println("front after amending is "+Queue.queue[Queue.front].getDist()+" "+Queue.queue[front].getWord());
 		System.out.println("DEQUEUE: end is = "+end);
-		//front = (front + 3)%size;
-		//QNode element = queue[front];
-		//Queue element = new Queue();
-		//Queue.front  = element.front;
 		--numElements;
 		return Queue.queue;	// remove this line once the funciton is completed.
 	}
 
 	/**
-		This funciton returns true if the queue is empty, otherwise returns false.
+		This function returns true if the queue is empty, otherwise returns false.
 	**/
 	public boolean isEmpty() {
 		if (numElements == 0) 
@@ -83,8 +80,16 @@ public class Queue {
 	/**
 		This function prints the contents of the queue.
 	**/
-	public void print() {
-        // TODO: print the contents of the queue from front to end. Please print each element on its own line. You may use the toString() method of QNode to print it on a line.
+	public static void print() {
+        // TODO: print the contents of the queue from front to end. 
+		// Please print each element on its own line. 
+		// You may use the toString() method of QNode to print it on a line.
+		for (int i = 0;  i < numElements + 1; ++i) {
+			if (Queue.queue[Queue.front+i] != null) {
+				//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
+				System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
+			}
+		}
 	}
 	/**
 	 * This function copies the contesnt of the array passsed in,
@@ -124,12 +129,13 @@ public class Queue {
 		QNode [] deq = q.dequeue();
 		System.out.println("deq is ="+Queue.queue[front]);
 		System.out.println("After dequeue:");
-		for (int i = 0;  i < numElements + 1; ++i) {
-			if (Queue.queue[Queue.front+i] != null) {
-				//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
-				System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
-			}
-		}
+		print();
+		//for (int i = 0;  i < numElements + 1; ++i) {
+		//	if (Queue.queue[Queue.front+i] != null) {
+		//		//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
+		//		System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
+		//	}
+		//}
 		
 	}
 }
