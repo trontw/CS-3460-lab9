@@ -130,12 +130,5 @@ public class Queue {
 		System.out.println("deq is ="+Queue.queue[front]);
 		System.out.println("After dequeue:");
 		print();
-		//for (int i = 0;  i < numElements + 1; ++i) {
-		//	if (Queue.queue[Queue.front+i] != null) {
-		//		//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
-		//		System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
-		//	}
-		//}
-		
 	}
 }
