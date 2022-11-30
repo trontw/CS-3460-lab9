@@ -142,6 +142,15 @@ public class Jugs {
 			PredB[state[0]][state[1]] = b;
 			ret = ret | dfs(state[0], state[1], bMax);
 		}
+		state = pourJugBtoA(state[0], state[1], bMax);
+		//pourJug returns updated state of both Jug1 and Jug2
+		if (!visited[state[0]][state[1]]) {
+			visited[state[0]][state[1]] = true;
+			predString[state[0]][state[1]] = "Pour Jug 2 -> Jug 1 ";
+			PredA[state[0]][state[1]] = a;
+			PredB[state[0]][state[1]] = b;
+			ret = ret | dfs(state[0], state[1], bMax);
+		}
 		//First, we must fill jug1 to start
 		//if (state[0] == 0) {
 		state = fillJug1(b);
@@ -165,15 +174,7 @@ public class Jugs {
 				PredB[state[0]][state[1]] = b;
 				ret = ret | dfs(state[0], state[1], bMax);
 			}
-		state = pourJugBtoA(state[0], state[1], bMax);
-		//pourJug returns updated state of both Jug1 and Jug2
-		if (!visited[state[0]][state[1]]) {
-			visited[state[0]][state[1]] = true;
-			predString[state[0]][state[1]] = "Pour Jug 2 -> Jug 1 ";
-			PredA[state[0]][state[1]] = a;
-			PredB[state[0]][state[1]] = b;
-			ret = ret | dfs(state[0], state[1], bMax);
-		}
+		
 		//}
 		state = emptyJug1(b);
 		//System.out.println("YO, Jug1 after emptying Jug1 is "+state[1]);
