@@ -3,12 +3,12 @@
 	It expands if the queue becomes full.
 **/
 public class Queue {
-	private static QNode [] queue;		// Array that stores the queue elements.
-	private static int front;				// Index pointing to the front of the queue.
-	private static int end;					// Index pointing to the element that is one less than the end of the queue.
-	private static int numElements;	// The number of elements currently stored in the queue.
-	private static int size;					// The capacity of the allocated array. If the number of elements reaches this capacity, we need to expand.
-	private static Queue q = new Queue();
+	public static QNode [] queue;		// Array that stores the queue elements.
+	public static int front;				// Index pointing to the front of the queue.
+	public static int end;					// Index pointing to the element that is one less than the end of the queue.
+	public static int numElements;	// The number of elements currently stored in the queue.
+	public static int size;					// The capacity of the allocated array. If the number of elements reaches this capacity, we need to expand.
+	public static Queue q = new Queue();
 	/**
 		Constructor: Allocates a queue with inital size of 1000.
 	**/
@@ -41,9 +41,9 @@ public class Queue {
 			++numElements;
 		}
 		/* insert new element here */
-		System.out.println("numElements before queue is "+numElements);
-		System.out.println("ENQUEUE: front is = "+front);
-		System.out.println("ENQUEUE: end pre increment is = "+end);
+		//System.out.println("numElements before queue is "+numElements);
+		//System.out.println("ENQUEUE: front is = "+front);
+		//System.out.println("ENQUEUE: end pre increment is = "+end);
 		++end;
 		queue[numElements + 1] = p;
 		++numElements;
@@ -53,7 +53,7 @@ public class Queue {
 		This function removes and returns the front element in the queue.
 	**/
 	public QNode[] dequeue() {
-		System.out.println("DEQUEUE: front before changes is = "+front);
+		//System.out.println("DEQUEUE: front before changes is = "+front);
 		if (numElements == 0) {
 			return null;
 		} else if (front == end) {
@@ -63,8 +63,8 @@ public class Queue {
 		} else {
 			Queue.front = Queue.front + 3;
 		}
-		System.out.println("front after amending is "+Queue.queue[Queue.front].getDist()+" "+Queue.queue[front].getWord());
-		System.out.println("DEQUEUE: end is = "+end);
+		//System.out.println("front after amending is "+Queue.queue[Queue.front].getDist()+" "+Queue.queue[front].getWord());
+		//System.out.println("DEQUEUE: end is = "+end);
 		--numElements;
 		return Queue.queue;	// remove this line once the funciton is completed.
 	}
@@ -114,12 +114,12 @@ public class Queue {
 		q.enqueue(new QNode(3, "coot"));
 		q.enqueue(new QNode(4, "boot"));
 		q.enqueue(new QNode(5, "boat"));
-		System.out.println("Before enqueue:");
+		//System.out.println("Before enqueue:");
 		//System.out.println(q.queue.getDist(),q.getWord());
-		for (int i = 0; i < n; ++i) {
-			if (Queue.queue[i] != null)
-				System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
-		}
+		//for (int i = 0; i < n; ++i) {
+		//	if (Queue.queue[i] != null)
+		//		System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
+		//}
 		q.enqueue(new QNode(6, "beat"));
 		System.out.println("After enqueue:");
 		for (int i = 0;  i < n; ++i) {
@@ -127,8 +127,9 @@ public class Queue {
 				System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
 		}
 		QNode [] deq = q.dequeue();
-		System.out.println("deq is ="+Queue.queue[front]);
+		//System.out.println("deq is ="+Queue.queue[front]);
 		System.out.println("After dequeue:");
 		print();
+	
 	}
 }

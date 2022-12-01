@@ -5,14 +5,23 @@ import java.util.Scanner;
 public class WordLadder {
 	private static String start;
 	private static String end;
-	private static StringMap T;			// This map stores the dictionary of words.
-	private static StringMap R;			// This map keeps track of all the words that are visited during breadth-first-search.
-																	// The key field is the word that is visited, and its value field can hold the predecessor pointer.
-	private static Queue Q;					// A queue to perform the breadth-first-search.
+	private static String infinity;
+	private static StringMap T;	// This map stores the dictionary of words.
+	private static StringMap R;	/* This map keeps track of all the words that 
+									are visited during breadth-first-search.
+									The key field is the word that is visited, and its 
+									value field can hold the predecessor pointer.*/
+	private static Queue Q;	// A queue to perform the breadth-first-search.
+	private static Queue Qtemp1;
+	private static Queue Qtemp2;
+	private static int [] pred;
+	private static int count = 0;
+	private static StringBuffer sb;
 
 	public static void main(String [] args) throws IOException {
 		// Loading the dictionary of words into the StringMap T.
 		T = new StringMap();
+		
 		File file = new File("dictionary4");
 		Scanner f = new Scanner(file);
 		while (f.hasNext()) {
@@ -26,8 +35,98 @@ public class WordLadder {
 		start = kb.nextLine();
 		System.out.print("Enter the end word: ");
 		end = kb.nextLine();
-
-		// TODO: Solution to find the shortest set of words that transforms the start word to the end word.
-
+		/*
+		 	TODO: Solution to find the shortest set of words that transforms the start word to the end word.
+		 * To set to infinity, set the value much greater than the total number of 
+		 * words in the Dictionary. (which is 3352)
+		 */
+		//Initialize the visited nodes to StringMap R
+		R = new StringMap();
+		//pred = new int[R.size];
+		Queue Qtemp1 = new Queue();
+		Queue Qtemp2 = new Queue();
+		Queue Q = new Queue();
+		StringNode[] pred = new StringNode[R.size];
+		StringNode[] dist = new StringNode[6000];
+		int hop = 0;
+		//private static Queue q = new Queue();
+		for (int i = 0; i < R.size; ++i) {
+			pred[i] = null;
+			dist[i] = dist[4000];//Initialize to Infinity
+		}
+		//for (StringNode curr = R.table[i]; curr != null; curr = curr.getNext()){
+		System.out.println("Made it to INIT routine.");
+		if (T.find(start) != null){
+			hop = 1;
+			String temp;
+			System.out.println(start + " is valid.");
+			//Q.queue[0].setDist(0);
+			//Q.queue[0].setWord(start);
+			//System.out.println("Source word is = "+Q.queue[0].getWord());
+			//Now, look for alternatives and make them their own node.
+			System.out.println("Searching for alternatives (neighbor nodes) ...");
+			for (int i = 0; i < start.length(); i++) {	
+				StringBuffer sb = new StringBuffer(start);
+				for (char j = 'a'; j <= 'z'; j++) {
+					sb.setCharAt(i, j);
+					//Building the Q at first hop(1):
+					// Q = {source}
+					if (T.find(sb.toString()) != null){		
+						temp = sb.toString();											
+						//R.insert(sb.toString(), start);<-- needed for Visited nodes later
+						//System.out.println("Found sb = "+sb.toString());
+						++count;
+						//Take 'start' out of Q
+						if (sb.toString().compareTo(start) != 0)	
+							Q.enqueue(new QNode(hop,sb.toString()));
+					}				
+				}
+			}
+		}		
+		System.out.println("Source word is = "+Q.queue[1].getWord());		
+		//while (!Q.isEmpty()){
+		//
+		//}
+			/*    sk = new Scanner(System.in);
+			while (sk.hasNext()) {
+				String word = sk.next();
+				if (x.find(word))
+					System.out.println(word + " is correct.");
+				else {
+						System.out.println("Suggesting alternatives ...");
+			
+						for (int i = 0; i < word.length(); i++) {
+							StringBuffer sb = new StringBuffer(word); 
+							for (char j = 'a'; j <= 'z'; j++) {
+							sb.setCharAt(i, j);
+							if (x.find(sb.toString()))
+										System.out.println(sb.toString());
+							}
+					}
+				}
+			} */
+		//	StringMap s = new StringMap();
+		//  find all possible variations of the 'start' word and place in Q
+			//i = next node in Q
+			//s = s.insert(start, s.table[5].setValue("lost"););
+			
+		//}
+		System.out.println("After enqueue:  and count = "+count);
+		/* 
+		for (int i = 0;  i < count + 1; ++i) {
+			if (R.table[i] != null) {
+				System.out.println("Inside if --->  the i = "+i);
+				System.out.println("Inside if ---> R.table[i].getKey() = "+R.table[i].getKey());
+				System.out.println(R.table[i].getKey()+" "+R.table[i].getValue());
+			}
+		}*/
+		for (int i = 0;  i < count + 1; ++i) {
+			if (Queue.queue[i] != null)
+				System.out.println(Queue.queue[i].getDist()+" "+Queue.queue[i].getWord());
+		}
+		//System.out.println(R.table[1].getKey()+" "+R.table[1].getValue());
 	}
 }
+
+//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
+//System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
