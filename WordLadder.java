@@ -10,13 +10,28 @@ public class WordLadder {
 	private static StringMap R;	/* This map keeps track of all the words that 
 									are visited during breadth-first-search.
 									The key field is the word that is visited, and its 
-									value field can hold the predecessor pointer.*/
+									value field can hold the predecessor pointer (pred[i]).*/
 	private static Queue Q;	// A queue to perform the breadth-first-search.
-	private static Queue Qtemp1;
-	private static Queue Qtemp2;
+	private static Queue Qtemp;
 	private static int [] pred;
 	private static int count = 0;
 	private static StringBuffer sb;
+
+	public static String isValid(String start2, String end2) {
+		for (int i = 0; i < count + 1; ++i) {
+			if (Q.queue[i] != null) {
+				String w = Q.queue[i].getWord();
+				// lose -> lost -> lest -> best -> beat
+				for (int k = 0; k < start2.length(); k++) {	
+					//StringBuffer sb = new StringBuffer(start2);
+					if  (w.charAt(k) == end2.charAt(k) ) {
+						return w;
+					}
+				}				
+			}
+		}
+		return null;
+	}
 
 	public static void main(String [] args) throws IOException {
 		// Loading the dictionary of words into the StringMap T.
@@ -43,22 +58,22 @@ public class WordLadder {
 		//Initialize the visited nodes to StringMap R
 		R = new StringMap();
 		//pred = new int[R.size];
-		Queue Qtemp1 = new Queue();
-		Queue Qtemp2 = new Queue();
+		Queue Qtemp = new Queue();
 		Queue Q = new Queue();
 		StringNode[] pred = new StringNode[R.size];
-		StringNode[] dist = new StringNode[6000];
+		//StringNode[] dist = new StringNode[6000];
 		int hop = 0;
+		int infinity = 4000;
 		//private static Queue q = new Queue();
 		for (int i = 0; i < R.size; ++i) {
 			pred[i] = null;
-			dist[i] = dist[4000];//Initialize to Infinity
+			//dist[i] = dist[infinity];//Initialize to Infinity
 		}
 		//for (StringNode curr = R.table[i]; curr != null; curr = curr.getNext()){
 		System.out.println("Made it to INIT routine.");
 		if (T.find(start) != null){
 			hop = 1;
-			String temp;
+			int source = 0;
 			System.out.println(start + " is valid.");
 			//Q.queue[0].setDist(0);
 			//Q.queue[0].setWord(start);
@@ -71,22 +86,30 @@ public class WordLadder {
 					sb.setCharAt(i, j);
 					//Building the Q at first hop(1):
 					// Q = {source}
-					if (T.find(sb.toString()) != null){		
-						temp = sb.toString();											
+					if (T.find(sb.toString()) != null){													
 						//R.insert(sb.toString(), start);<-- needed for Visited nodes later
 						//System.out.println("Found sb = "+sb.toString());
 						++count;
-						//Take 'start' out of Q
+						//Enqueue each node onto the Q, setting dist to infinity, word to name of node (i.e. lose)
 						if (sb.toString().compareTo(start) != 0)	
-							Q.enqueue(new QNode(hop,sb.toString()));
-					}				
+							Q.enqueue(new QNode(infinity,sb.toString()));
+						//Insert all nodes into R StringMap (BackPointer): key = name, value = prev node
+						R.insert(sb.toString(), start);	
+					}			
 				}
-			}
+			} //Last, put source node onto Q (FIFO)
+			Q.enqueue(new QNode(source,start));
 		}		
-		System.out.println("Source word is = "+Q.queue[1].getWord());		
-		//while (!Q.isEmpty()){
-		//
-		//}
+		//System.out.println("Source word is = "+Q.queue[1].getWord());	
+
+		while (!Q.isEmpty()){
+			//Get next node in the Q and see if valid
+			String temp = isValid(start, end);
+			if ( temp != null){
+				System.out.println("Good word is = "+temp);
+			}	
+			Q.dequeue();
+		}
 			/*    sk = new Scanner(System.in);
 			while (sk.hasNext()) {
 				String word = sk.next();
@@ -112,17 +135,18 @@ public class WordLadder {
 			
 		//}
 		System.out.println("After enqueue:  and count = "+count);
-		/* 
+		
+
 		for (int i = 0;  i < count + 1; ++i) {
+			if (Q.queue[i] != null)
+				System.out.println(Q.queue[i].getDist()+" "+Q.queue[i].getWord());
+		}
+		for (int i = 1;  i < count + 1; ++i) {
 			if (R.table[i] != null) {
 				System.out.println("Inside if --->  the i = "+i);
 				System.out.println("Inside if ---> R.table[i].getKey() = "+R.table[i].getKey());
 				System.out.println(R.table[i].getKey()+" "+R.table[i].getValue());
 			}
-		}*/
-		for (int i = 0;  i < count + 1; ++i) {
-			if (Queue.queue[i] != null)
-				System.out.println(Queue.queue[i].getDist()+" "+Queue.queue[i].getWord());
 		}
 		//System.out.println(R.table[1].getKey()+" "+R.table[1].getValue());
 	}
