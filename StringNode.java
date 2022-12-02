@@ -3,9 +3,9 @@
 **/
 public class StringNode {
 
-	private String key;				// This is the key field that is used as the key in the hash table.
-	private String value;			// This is the associated value of the key field.
-	private StringNode next;	// Reference to the next node in the hash map.
+	public String key;				// This is the key field that is used as the key in the hash table.
+	public String value;			// This is the associated value of the key field.
+	public StringNode next;	// Reference to the next node in the hash map.
 
 	/**
 		Constructor: creates an instance of StringNode.

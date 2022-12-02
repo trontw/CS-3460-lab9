@@ -5,7 +5,8 @@
 **/
 public class StringMap {
 
-  StringNode [] table;	// The array of tables. Each table cell is a pointer to the head node of a linked list.
+  StringNode [] table;	// The array of tables. Each table cell is a 
+                        // pointer to the head node of a linked list.
   int numelements;			// The number of elements actually stored in the table.
   int size;							// The size of the array (or table).
 
@@ -19,7 +20,8 @@ public class StringMap {
   }
 
 	/**
-		This function inserts a key and its corresponding value into the map.
+		This function inserts a key and its 
+    corresponding value into the map.
 		Be careful, that duplicate keys are not ignored.
 	**/
   public void insert(String key, String value) {
