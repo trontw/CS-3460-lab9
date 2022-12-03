@@ -31,24 +31,30 @@ public class Queue {
 	**/
 	public void enqueue(QNode p) {
 		//If array is full, increase size and copy old into new
-		
+		//System.out.println("numeElements in ENQ = "+numElements);
+		//System.out.println("size in ENQ before loop = "+size);
+		//System.out.println("front before loop = "+front);
+		//System.out.println("end before loop = "+end);
 		if (numElements == size) {
+			//System.out.println("Tell me I'm HERE!!!");
 			QNode[] new_arr = new QNode[size * 2];
-			QNode[] temp = queue;
+			//front += 1;
+			//QNode[] temp = queue;			
 			int old_size = size;
+			size = (size * 2);		
 			for (int i = 0; i < old_size; ++i) {
-				new_arr[i] = queue[i]; 
-			}
+				new_arr[size - (i + 1)] = queue[(front - i + old_size)%old_size]; 
+				//front = (front - 1 + size)%size;
+			}			
+			//front = ((front + (size - 1)) - old_size);
+			front = (front + old_size);
+			end = (end + size)%size;
 			queue = new_arr;
-			
-			//copyArray(temp);
-			/* insert new element here */
-			//queue[end] = p;
-			//end = (end - 1 + old_size)%old_size;
-			//++numElements;
+			print();
 		}
 		/* insert new element here */
 		queue[end] = p;
+		//end = (end + 1)%queue.length;
 		end = (end - 1 + size)%size;
 		++numElements;
 	}
@@ -60,8 +66,16 @@ public class Queue {
 		if (Queue.numElements == 0) {
 			return null;
 		} 
+		//System.out.println("Tell me I'm HERE in DQ!!!");
+		//System.out.println("numeElements in DQ = "+numElements);
+		//System.out.println("size in DQ before loop = "+size);
+		//System.out.println("front before changes = "+front);
+		//System.out.println("end before changes = "+end);
 		QNode temp = queue[front];
+		//queue[front] = null;
 		front = (front - 1 + size)%size;
+		//System.out.println("front after changes = "+front);
+		//System.out.println("end after changes = "+end);
 		--numElements;
 		return temp;	// remove this line once the funciton is completed.
 	}
@@ -78,14 +92,14 @@ public class Queue {
 		This function prints the contents of the queue.
 	**/
 	public static void print() {
-		System.out.println("Front before print is = "+Queue.front);
-		System.out.println("End before print is = "+Queue.end);
+		//System.out.println("Front before print is = "+Queue.front);
+		//System.out.println("End before print is = "+Queue.end);
 		//for (int i = front; i < end; ++i) {
 		for (int i = 0; i < numElements; ++i) {
-			int check = (front - 1 + size)%size;
-			if (Queue.queue[check] != null && Queue.queue[i] != null) {
+			int check = (front - i + size)%size;
+			if (Queue.queue[check] != null) {
 				//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
-				System.out.println(Queue.queue[i].getDist()+" "+Queue.queue[i].getWord());
+				System.out.println(Queue.queue[check].getDist()+" "+Queue.queue[check].getWord());
 			}
 		}
 	}
@@ -112,34 +126,36 @@ public class Queue {
 		//QNode[] arr = new QNode[n];
 		//Queue q = new Queue();
 
-		q.enqueue(new QNode(1, "lost"));
-		q.enqueue(new QNode(2, "loot"));
-		q.enqueue(new QNode(3, "coot"));
-		q.enqueue(new QNode(4, "boot"));
-		q.enqueue(new QNode(5, "boat"));
-		q.enqueue(new QNode(6, "bode"));
-		q.enqueue(new QNode(7, "coat"));
-		q.enqueue(new QNode(8, "moat"));
-		q.enqueue(new QNode(9, "rote"));
-		q.enqueue(new QNode(10, "rite"));
-		q.enqueue(new QNode(11, "lost"));
-		q.enqueue(new QNode(12, "loot"));
-		System.out.println("After Enqueue:");
-		print();
+		//q.enqueue(new QNode(1, "lost"));
+		//q.enqueue(new QNode(2, "loot"));
+		//q.enqueue(new QNode(3, "coot"));
+		//q.enqueue(new QNode(4, "boot"));
+		//q.enqueue(new QNode(5, "boat"));
+		//q.enqueue(new QNode(6, "bode"));
+		//q.enqueue(new QNode(7, "coat"));
+		//q.enqueue(new QNode(8, "moat"));
+		//q.enqueue(new QNode(9, "rote"));
+		//System.out.println("|----------- After 1st Enqueue: ---------|");
+		//print();
+		//q.enqueue(new QNode(10, "rite"));
+		//q.enqueue(new QNode(11, "lost"));
+		//q.enqueue(new QNode(12, "loot"));
+		//System.out.println("|---- After 2nd Enqueue (overflow 10 by 3 places:---|");
+		//print();
 		//System.out.println("Before enqueue:");
-		/* 
-		QNode deq = q.dequeue();
-		QNode deq1 = q.dequeue();
-		QNode deq2 = q.dequeue();
-		QNode deq3 = q.dequeue();
-		System.out.println("After dequeue:");
-		print();
-		*/
+		 
+		//QNode deq = q.dequeue();
+		//QNode deq1 = q.dequeue();
+		//QNode deq2 = q.dequeue();
+		//QNode deq3 = q.dequeue();
+		//System.out.println("After dequeue, taking us down to 8 indexes:");
+		//print();
+		
 
-		q.enqueue(new QNode(13, "coot"));
-		q.enqueue(new QNode(14, "boot"));
-		System.out.println("After Enqueue:");
-		print();
+		//q.enqueue(new QNode(13, "coot"));
+		//q.enqueue(new QNode(14, "boot"));
+		//System.out.println("|-----------After 3rd Enqueue:---------|");
+		//print();
 		/* 
 		QNode deq4 = q.dequeue();
 		QNode deq5 = q.dequeue();
@@ -153,7 +169,7 @@ public class Queue {
 		System.out.println("After dequeue:");
 		print();
 			*/
-		;
+		
 		
 
 	}

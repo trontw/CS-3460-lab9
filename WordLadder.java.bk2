@@ -35,26 +35,41 @@ public class WordLadder {
 		 */
 		//Initialize the visited nodes to StringMap R
 		R = new StringMap();
+		//pred = new int[R.size];
+		Queue Qtemp = new Queue();
 		Queue Q = new Queue();
-		QNode DQ;
+		StringNode[] pred = new StringNode[R.size];
 		//StringNode[] dist = new StringNode[6000];
 		int hop = 0;
+	
+		//private static Queue q = new Queue();
+		for (int i = 0; i < R.size; ++i) {
+			pred[i] = null;
+		}
 		int source = 0;
 		//for (StringNode curr = R.table[i]; curr != null; curr = curr.getNext()){
 		//System.out.println("Made it to INIT routine.");
 
 		//Enqueue input (initiall dist = 0, word = lose)
 		Q.enqueue(new QNode(0,start));
-		R.insert(start, start);
 		//System.out.println("numElements is = "+Queue.numElements);
 		int dist = 0;
 		while (!Q.isEmpty()){
-			DQ = Q.dequeue();
+			//if (T.find(start) != null){
+			QNode DQ = Q.dequeue();
 			//Increment the distance (dist) to next node ring
-			//++source;		
 			//++hop;
+			++source;		
+			++hop;
 			dist = DQ.getDist();
-			DQ.setDist(dist + 1);	
+			//System.out.println("DQ just dist ---- PRE ADD ------> "+dist);
+		
+			DQ.setDist(dist + 1);
+		
+			//System.out.println("DQ just dist ---- POST ADD ------> "+DQ.getDist());
+			//System.out.println("----------->Hop before DQ != null is = "+hop);
+		
+			System.out.println("DQ word = "+DQ.getWord());
 			//Now, look for alternatives and make them their own node.
 			//System.out.println("Searching for alternatives (neighbor nodes) ...");
 			for (int i = 0; i < DQ.getWord().length(); i++) {	
@@ -62,48 +77,54 @@ public class WordLadder {
 				for (char j = 'a'; j <= 'z'; j++) {
 					sb.setCharAt(i, j);
 					//Building the Q at first hop(1):
+					// Q = {source}
 					if (T.find(sb.toString()) != null){													
+						//R.insert(sb.toString(), start);<-- needed for Visited nodes later						
 						++count;					
 						//Enqueue each node onto the Q, setting dist to infinity, word to name of node (i.e. lose)
+						System.out.println("Hop before Q.enqueue is = "+hop);
+						System.out.println("sb = "+sb.toString());
+						System.out.println("DQ Dist is = "+DQ.getDist());
+						System.out.println("DQ Word is = "+DQ.getWord());
 						if (DQ.getWord().compareTo(end) == 0) {
-							//System.out.println("Hop before Q.enqueue is = "+hop);
-							System.out.println("sb = "+sb.toString());
-							System.out.println("DQ Dist is = "+DQ.getDist());
-							System.out.println("DQ Word is = "+DQ.getWord());
-							//R.insert(sb.toString(), end);
+							track = DQ.getDist();
+							R.insert(sb.toString(), end);
 							return true;
 						}
 						//Insert all nodes into R StringMap (BackPointer): key = name, value = prev node
 						//First check to make sure input is not already stored in R
 						//Then enqueue the sb.toString() and add it to the Key in R
 						if (R.find(sb.toString()) == null)	{
-							Q.enqueue(new QNode(DQ.getDist(),sb.toString()));
+							//Q.enqueue(new QNode(1,sb.toString()));
+							Q.enqueue(new QNode(DQ.getDist()+1,sb.toString()));
 							R.insert(sb.toString(), DQ.getWord());	
 						}						
 					}			
-				}	
+				}
 			} 
 		}
 		return false;	
 	}
-	
-	public static  void print(String end2){
-		//System.out.println("The input end2 is: "+end2);
-		StringNode tt = R.find(end2);
-		if (end2 == start) {
-			System.out.println(tt.getKey());
-			return;
+
+	public static String isValid(String start2, String end2) {
+		for (int i = 0; i < count + 1; ++i) {
+			if (Q.queue[i] != null) {
+				String w = Q.queue[i].getWord();
+				// lose -> lost -> lest -> best -> beat
+				for (int k = 0; k < start2.length(); k++) {	
+					//StringBuffer sb = new StringBuffer(start2);
+					if  (w.charAt(k) == end2.charAt(k) ) {
+						return w;
+					}
+				}				
+			}
 		}
-		//System.out.println("Key = "+tt.getKey());
-		//System.out.println(tt.getKey());
-		print(tt.getValue());
-		System.out.println(tt.getKey());
+		return null;
 	}
 
 	public static void main(String [] args) throws IOException {
 		// Loading the dictionary of words into the StringMap T.
 		T = new StringMap();
-		R = new StringMap();
 		File file = new File("dictionary4");
 		Scanner f = new Scanner(file);
 		while (f.hasNext()) {
@@ -117,12 +138,41 @@ public class WordLadder {
 		start = kb.nextLine();
 		System.out.print("Enter the end word: ");
 		end = kb.nextLine();
-		
+
 		if (BFS()) {
+			//System.out.println("track = "+ track);
 			System.out.println("Yay, A word Ladder is possible.");
-			print(end);
+			for (int i = 0;  i < track + 1; ++i) {
+				//int check = (Queue.front - 1 + Queue.size)%Queue.size;
+				if (R.table[i] != null) {
+					///System.out.println("Inside if ---> R.table[i].getKey() = "+R.table[i].getKey());
+					System.out.println(R.table[i].getValue());
+					//System.out.println(R.table[i].getKey());					
+				}
+			}
+			System.out.println(end);
 		} else {
 			System.out.println("Duh, Impossible.");
 		}
+		//for (int i = 0;  i < count + 1; ++i) {
+		//	if (Q.queue[i] != null)
+		//		System.out.println(Q.queue[i].getDist()+" "+Q.queue[i].getWord());
+		//}
+		for (int i = 1;  i < count + 1; ++i) {
+			int check = (Queue.front - 1 + Queue.size)%Queue.size;
+			//if (Queue.queue[check] != null && Queue.queue[i] != null) {
+			//if (R.table[check] != null && R.table[i] != null) {
+				///System.out.println("Inside if --->  the i = "+i);
+				///System.out.println("Inside if ---> R.table[i].getKey() = "+R.table[i].getKey());
+				///System.out.println(R.table[i].getKey()+" "+R.table[i].getValue());
+				//if (R.table[i].getValue() == end || R.table[i].getKey() == end) {
+				//	BFS = true;
+				//}
+			//}
+		}
+
 	}		
 }
+
+//System.out.println(q.queue[i].getDist()+" "+q.queue[i].getWord());
+//System.out.println(Queue.queue[Queue.front+i].getDist()+" "+Queue.queue[Queue.front+i].getWord());
